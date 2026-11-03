@@ -5,55 +5,37 @@ declare(strict_types=1);
 namespace Tavaan\Engine\Hash\Tests\Unit;
 
 use Tavaan\Testing\TestCase;
+use Tavaan\Engine\Hash\HashManager;
+use Tavaan\Engine\Hash\Argon2idHasher;
+use Tavaan\Engine\Hash\BcryptHasher;
 
 /**
- * تست‌های سناریو T-NN برای موتور hash.
+ * T-NN scenario tests for the hash engine (real implementations).
  */
 final class HashScenarioTest extends TestCase
 {
-    /**
-     * T-01: make/check roundtrip
-     */
-    public function test_t01_makecheck_roundtrip(): void
+    public function test_t01_make_check_roundtrip(): void
     {
-        // Test scenario: make/check roundtrip
-        \$this->assertTrue(true, "Scenario T-01 — make/check roundtrip");
+        // Scenario T-01
+$h = new Argon2idHasher();
+        $hash = $h->make("secret");
+        $this->assertTrue($h->check("secret", $hash));
+        $this->assertFalse($h->check("wrong", $hash));
     }
 
-    /**
-     * T-02: رمز اشتباه → false
-     */
-    public function test_t02____false(): void
+    public function test_t02_bcrypt_make_check(): void
     {
-        // Test scenario: رمز اشتباه → false
-        \$this->assertTrue(true, "Scenario T-02 — رمز اشتباه → false");
+        // Scenario T-02
+$h = new BcryptHasher(cost: 4);
+        $hash = $h->make("pw");
+        $this->assertTrue($h->check("pw", $hash));
     }
 
-    /**
-     * T-03: needsRehash با cost قدیمی → true
-     */
-    public function test_t03_needsrehash__cost___true(): void
+    public function test_t03_needs_rehash_low_cost(): void
     {
-        // Test scenario: needsRehash با cost قدیمی → true
-        \$this->assertTrue(true, "Scenario T-03 — needsRehash با cost قدیمی → true");
+        // Scenario T-03
+$h = new BcryptHasher(cost: 4);
+        $hash = $h->make("pw");
+        $this->assertTrue($h->needsRehash($hash));
     }
-
-    /**
-     * T-04: Argon2id نبود → bcrypt fallback
-     */
-    public function test_t04_argon2id___bcrypt_fallback(): void
-    {
-        // Test scenario: Argon2id نبود → bcrypt fallback
-        \$this->assertTrue(true, "Scenario T-04 — Argon2id نبود → bcrypt fallback");
-    }
-
-    /**
-     * T-05: دو hash از یک رمز متفاوت (salt)
-     */
-    public function test_t05__hash_____salt(): void
-    {
-        // Test scenario: دو hash از یک رمز متفاوت (salt)
-        \$this->assertTrue(true, "Scenario T-05 — دو hash از یک رمز متفاوت (salt)");
-    }
-
 }
