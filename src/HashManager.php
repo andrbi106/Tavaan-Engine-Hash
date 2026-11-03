@@ -67,10 +67,10 @@ final class HashManager implements HasherInterface
     }
 
     /**
-     * driver
+     * driver — return current HasherInterface driver.
      */
-    public function driver()
+    public function driver(): HasherInterface
     {
-        return null;
+        return $this->driver;
     }
 }
