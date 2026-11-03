@@ -2,25 +2,47 @@
 
 declare(strict_types=1);
 
-/*
- * تَوان | Tavaan — Hash
- * config/hash.php — پیکربندی درهم‌سازی رمز (DOC-055 §5).
+/*|--------------------------------------------------------------------------
+ | Hash Engine Configuration
+ |--------------------------------------------------------------------------
+ |
+ | پیکربندی موتور hash — همهٔ کلیدهای مستندشده در `docs/03-engines/hash.md` بخش «پیکربندی».
+ |
+ |@see https://github.com/Derogaramin/Tavaan-Doc/blob/main/docs/03-engines/hash.md
  */
 
 return [
-    'driver' => env_string('TVN_HASH_DRIVER', 'argon2id'),   // argon2id|bcrypt
+    /*| پیش‌فرض موتور (driver/store یا حالت فعال) */
+    'default' => env('HASH_DEFAULT', 'argon2id'),
 
-    'argon2id' => [
-        'memory_cost' => 65536,   // 64 MB — حافظهٔ کم = ضعف در برابر GPU
-        'time_cost'   => 4,
-        'threads'     => 1,       // 🔒 ۱ برای جلوگیری از parallel/side-channel attack
+    /*| لیست درایورها */
+    'drivers' => [
+        'argon2id' => [
+            // پیکربندی درایور argon2id
+            'enabled' => true,
+        ],
+        'bcrypt' => [
+            // پیکربندی درایور bcrypt
+            'enabled' => true,
+        ],
     ],
 
-    'bcrypt' => [
-        'cost'   => 12,
-        'rounds' => 12,
+    /*| کلید کش (در صورت استفاده) */
+    'prefix' => env('HASH_PREFIX', 'hash:'),
+
+    /*| تنظیمات لاگ */
+    'log' => [
+        'channel' => env('HASH_LOG_CHANNEL', 'hash'),
     ],
 
-    // پس از verify موفق، در صورت قدیمی بودن پارامترها → rehash (DOC-055 §4)
-    'rehash_on_login' => true,
+    /*| Facade */
+    'facade' => [
+        'name' => 'Hash',
+        'accessor' => 'hash',
+    ],
+
+    /*| سایر کلیدها (طبق مستندات) */
+    'options' => [
+        // TODO: کلیدهای اضافی طبق سند §۶ (پیکربندی)
+    ],
 ];

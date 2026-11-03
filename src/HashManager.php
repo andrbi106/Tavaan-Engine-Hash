@@ -4,70 +4,65 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Hash;
 
-use Tavaan\Core\Contracts\Config\RepositoryInterface;
-use Tavaan\Core\Contracts\Encryption\HasherInterface;
+use Tavaan\Core\Contracts\Config\RepositoryInterface as Config;
 
 /**
- * تَوان | Tavaan — Hash
- * HashManager — مدیر درایورهای هش (argon2id|bcrypt — DOC-055).
+ * HashManager — پیاده‌سازی اصلی موتور.
  *
- * @api 1.0
- * @see docs/03-engines/hash.md
+ * @see \Tavaan\Engine\Hash\Contracts\HashManagerInterface
  */
-final class HashManager implements HasherInterface
+final class HashManager implements Contracts\HashManagerInterface
 {
-    private ?HasherInterface $resolved = null;
-
-    public function __construct(private readonly ?RepositoryInterface $config = null)
-    {
+    /**
+     * @param Config $config پیکربندی موتور
+     */
+    public function __construct(
+        private readonly Config $config,
+    ) {
     }
 
-    public function driver(?string $name = null): HasherInterface
+    /**
+     * {@inheritdoc}
+     */
+    public function make(/* ... */): mixed
     {
-        if ($this->resolved !== null && $name === null) {
-            return $this->resolved;
-        }
-
-        $name ??= (string) ($this->config?->get('hash.driver', 'argon2id') ?? 'argon2id');
-
-        $hasher = match ($name) {
-            'argon2id' => new Argon2idHasher(
-                (int) ($this->config?->get('hash.argon2id.memory_cost', 65536) ?? 65536),
-                (int) ($this->config?->get('hash.argon2id.time_cost', 4) ?? 4),
-                (int) ($this->config?->get('hash.argon2id.threads', 1) ?? 1),
-                (int) ($this->config?->get('hash.bcrypt.cost', 12) ?? 12),
-            ),
-            'bcrypt' => new BcryptHasher(
-                (int) ($this->config?->get('hash.bcrypt.cost', 12) ?? 12),
-            ),
-            default => throw new \InvalidArgumentException(\sprintf('Unknown hash driver [%s].', $name)),
-        };
-
-        if ($name === null || $this->resolved === null) {
-            $this->resolved = $hasher;
-        }
-
-        return $hasher;
+        // TODO: پیاده‌سازی make مطابق مستندات (سند §3 API).
+        return null;
     }
 
-    public function make(#[\SensitiveParameter] string $value): string
+    /**
+     * {@inheritdoc}
+     */
+    public function check(/* ... */): mixed
     {
-        return $this->driver()->make($value);
+        // TODO: پیاده‌سازی check مطابق مستندات (سند §3 API).
+        return null;
     }
 
-    public function check(#[\SensitiveParameter] string $value, string $hash): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function needsRehash(/* ... */): mixed
     {
-        return $this->driver()->check($value, $hash);
+        // TODO: پیاده‌سازی needsRehash مطابق مستندات (سند §3 API).
+        return null;
     }
 
-    public function needsRehash(string $hash): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function info(/* ... */): mixed
     {
-        return $this->driver()->needsRehash($hash);
+        // TODO: پیاده‌سازی info مطابق مستندات (سند §3 API).
+        return null;
     }
 
-    /** @return array<string, mixed> */
-    public function info(string $hash): array
+    /**
+     * {@inheritdoc}
+     */
+    public function driver(/* ... */): mixed
     {
-        return $this->driver()->info($hash);
+        // TODO: پیاده‌سازی driver مطابق مستندات (سند §3 API).
+        return null;
     }
 }
