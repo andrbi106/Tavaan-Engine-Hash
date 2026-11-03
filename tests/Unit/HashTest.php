@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Hash\Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Tavaan\Testing\TestCase;
 use Tavaan\Engine\Hash\HashManager;
 use Tavaan\Engine\Hash\Argon2idHasher;
 use Tavaan\Engine\Hash\BcryptHasher;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Hash\Tests\Feature;
 
-use PHPUnit\Framework\TestCase;
+use Tavaan\Testing\TestCase;
 use Tavaan\Engine\Hash\HashManager;
 use Tavaan\Engine\Hash\HashServiceProvider;
 use Tavaan\Engine\Hash\Contracts\HasherInterface;
