@@ -65,4 +65,13 @@ final class HashManager implements HasherInterface
             ),
         };
     }
+
+    /**
+     * driver
+     */
+    public function driver(/* ... */): mixed
+    {
+        // TODO: Implement per docs.
+        return null;
+    }
 }
