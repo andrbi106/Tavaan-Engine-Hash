@@ -69,7 +69,7 @@ final class HashManager implements HasherInterface
     /**
      * driver
      */
-    public function driver(/* ... */): mixed
+    public function driver()
     {
         return null;
     }
