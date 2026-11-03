@@ -2,47 +2,24 @@
 
 declare(strict_types=1);
 
-/*|--------------------------------------------------------------------------
- | Hash Engine Configuration
- |--------------------------------------------------------------------------
- |
- | پیکربندی موتور hash — همهٔ کلیدهای مستندشده در `docs/03-engines/hash.md` بخش «پیکربندی».
- |
- |@see https://github.com/Derogaramin/Tavaan-Doc/blob/main/docs/03-engines/hash.md
- */
-
 return [
-    /*| پیش‌فرض موتور (driver/store یا حالت فعال) */
-    'default' => env('HASH_DEFAULT', 'argon2id'),
+    /*| درایور پیش‌فرض */
+    'driver' => \getenv('TVN_HASH_DRIVER') !== false ? \getenv('TVN_HASH_DRIVER') : 'argon2id',
 
-    /*| لیست درایورها */
-    'drivers' => [
-        'argon2id' => [
-            // پیکربندی درایور argon2id
-            'enabled' => true,
-        ],
-        'bcrypt' => [
-            // پیکربندی درایور bcrypt
-            'enabled' => true,
-        ],
+    /*| تنظیمات Argon2id */
+    'argon2id' => [
+        'memory_cost' => (int) (\getenv('TVN_HASH_MEMORY_COST') !== false ? \getenv('TVN_HASH_MEMORY_COST') : 65536),
+        'time_cost' => (int) (\getenv('TVN_HASH_TIME_COST') !== false ? \getenv('TVN_HASH_TIME_COST') : 4),
+        'threads' => (int) (\getenv('TVN_HASH_THREADS') !== false ? \getenv('TVN_HASH_THREADS') : 1),
     ],
 
-    /*| کلید کش (در صورت استفاده) */
-    'prefix' => env('HASH_PREFIX', 'hash:'),
-
-    /*| تنظیمات لاگ */
-    'log' => [
-        'channel' => env('HASH_LOG_CHANNEL', 'hash'),
+    /*| تنظیمات Bcrypt (fallback) */
+    'bcrypt' => [
+        'cost' => (int) (\getenv('TVN_HASH_BCRYPT_COST') !== false ? \getenv('TVN_HASH_BCRYPT_COST') : 12),
     ],
 
-    /*| Facade */
-    'facade' => [
-        'name' => 'Hash',
-        'accessor' => 'hash',
-    ],
-
-    /*| سایر کلیدها (طبق مستندات) */
-    'options' => [
-        // TODO: کلیدهای اضافی طبق سند §۶ (پیکربندی)
-    ],
+    /*| rehash خودکار هنگام ورود */
+    'rehash_on_login' => \getenv('TVN_HASH_REHASH_ON_LOGIN') !== false
+        ? \filter_var(\getenv('TVN_HASH_REHASH_ON_LOGIN'), \FILTER_VALIDATE_BOOL)
+        : true,
 ];

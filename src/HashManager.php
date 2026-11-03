@@ -4,65 +4,65 @@ declare(strict_types=1);
 
 namespace Tavaan\Engine\Hash;
 
-use Tavaan\Core\Contracts\Config\RepositoryInterface as Config;
+use Tavaan\Engine\Hash\Contracts\HasherInterface;
 
 /**
- * HashManager — پیاده‌سازی اصلی موتور.
+ * HashManager — انتخاب Hasher بر اساس config.
  *
- * @see \Tavaan\Engine\Hash\Contracts\HashManagerInterface
+ * Facade: `Hash` → accessor `hash`.
+ *
+ * @see docs/03-engines/hash.md
  */
-final class HashManager implements Contracts\HashManagerInterface
+final class HashManager implements HasherInterface
 {
+    private HasherInterface $driver;
+
     /**
-     * @param Config $config پیکربندی موتور
+     * @param array<string, mixed> $config
      */
     public function __construct(
-        private readonly Config $config,
+        private readonly array $config = [],
     ) {
+        $this->driver = $this->createDriver();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function make(/* ... */): mixed
+    public function make(string $value, array $options = []): string
     {
-        // TODO: پیاده‌سازی make مطابق مستندات (سند §3 API).
-        return null;
+        return $this->driver->make($value, $options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function check(/* ... */): mixed
+    public function check(string $value, string $hash): bool
     {
-        // TODO: پیاده‌سازی check مطابق مستندات (سند §3 API).
-        return null;
+        return $this->driver->check($value, $hash);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function needsRehash(/* ... */): mixed
+    public function needsRehash(string $hash, array $options = []): bool
     {
-        // TODO: پیاده‌سازی needsRehash مطابق مستندات (سند §3 API).
-        return null;
+        return $this->driver->needsRehash($hash, $options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function info(/* ... */): mixed
+    public function info(string $hash): array
     {
-        // TODO: پیاده‌سازی info مطابق مستندات (سند §3 API).
-        return null;
+        return $this->driver->info($hash);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function driver(/* ... */): mixed
+    public function getDriver(): HasherInterface
     {
-        // TODO: پیاده‌سازی driver مطابق مستندات (سند §3 API).
-        return null;
+        return $this->driver;
+    }
+
+    private function createDriver(): HasherInterface
+    {
+        $driver = $this->config['driver'] ?? 'argon2id';
+        return match ($driver) {
+            'bcrypt' => new BcryptHasher(
+                cost: $this->config['bcrypt']['cost'] ?? 12,
+            ),
+            default => new Argon2idHasher(
+                memoryCost: $this->config['argon2id']['memory_cost'] ?? 65536,
+                timeCost: $this->config['argon2id']['time_cost'] ?? 4,
+                threads: $this->config['argon2id']['threads'] ?? 1,
+            ),
+        };
     }
 }
