@@ -2,6 +2,8 @@
 
 > **هش رمز عبور** — موتور Hash در فریمورک تَوان
 
+این موتور از کلاس پایهٔ `Engine` (در [Tavaan-Engine-Core](https://github.com/andrbi106/Tavaan-Engine-Core)) ارث می‌برد.
+
 ## مشخصات
 
 | فیلد | مقدار |
@@ -11,54 +13,60 @@
 | عنوان فارسی | هش رمز عبور |
 | نسخه | `0.1.0` |
 | namespace | `Tavaan\Engine\Hash` |
-| نوع | `engine` |
-| Facade | `Hash` (accessor: `hash`) |
+| کلاس موتور | `Tavaan\Engine\Hash\HashEngine` |
+| Facade | Hash (`hash`) |
 
-## قراردادها (Contracts)
+## کلاس موتور
 
-این موتور قراردادهای زیر را ارائه می‌دهد:
+```php
+namespace Tavaan\Engine\Hash;
 
-- `Tavaan\Engine\Hash\Contracts\HasherInterface`
+use Tavaan\EngineCore\Engine as BaseEngine;
+use Tavaan\EngineCore\Contracts\EngineManifestInterface;
 
-## کلاس‌های اصلی
+final class HashEngine extends BaseEngine
+{
+    public function __construct(EngineManifestInterface $manifest)
+    {
+        parent::__construct($manifest);
+    }
 
-- `src/Argon2idHasher.php`
-- `src/BcryptHasher.php`
-- `src/HashManager.php`
-- `src/HashServiceProvider.php`
+    public function register(ContainerInterface $container): void
+    {
+        parent::register($container);
+        // bindingهای اختصاصی موتور
+    }
+
+    public function boot(): void
+    {
+        parent::boot();
+    }
+}
+```
+
+**فایل:** `src/HashEngine.php`
+
+## وابستگی‌ها
+
+**موتورهای مورد‌نیاز:** `config`
 
 ## Service Providerها
 
 - `Tavaan\Engine\Hash\HashServiceProvider`
 
-## وابستگی‌ها
+## سه درگاه ارتباط با سایر موتورها
 
-**موتورهای مورد‌نیاز:**
-
-- `config`
-
-## پیکربندی
-
-- فایل پیکربندی: `config/hash.php`
-- کلید: `hash`
+| درگاه | الگو | متدهای convenience |
+|---|---|---|
+| Container | pull-based DI | `make()`, `bound()` |
+| Events | pub/sub | `dispatch()`, `listen()` |
+| EngineBus | point-to-point RPC | `call()`, `offer()` |
 
 ## نصب
 
 ```bash
 git clone https://github.com/andrbi106/Tavaan-Engine-Hash.git
 ```
-
-این موتور بخشی از فریمورک تَوان است و معمولاً به‌صورت مستقیم نصب نمی‌شود،
-بلکه توسط [Tavaan-Core](https://github.com/andrbi106/Tavaan-Core) مدیریت می‌شود.
-
-## روابط با سایر مخازن
-
-| مخزن | نقش |
-|---|---|
-| **`andrbi106/Tavaan-Engine-Hash`** (این مخزن) | موتور Hash |
-| `andrbi106/Tavaan-Engine-Core` | ساختار پایه + درگاه ارتباط موتورها |
-| `andrbi106/Tavaan-Core` | اسکلت اپلیکیشن + همهٔ موتورها |
-| `Derogaramin/Tavaan-Framework` | فریمورک مادر (monorepo) |
 
 ## مجوز
 
